@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+
+		<title>Chomp</title>
+	</head>
+
+	<body>
+		<div class="app-container js-app-container">
+			<canvas class="app-canvas js-app-canvas">Your browser does not support canvas elements.</canvas>
+
+			<div class="menu main-menu js-main-menu">
+				<h1>Chomp</h1>
+
+				<button class="js-main-join">
+					Join Game
+				</button>
+
+				<button class="js-main-host">
+					Host Game
+				</button>
+
+				<button class="js-main-about">
+					About
+				</button>
+
+				<button class="js-main-exit">
+					Exit
+				</button>
+			</div>
+
+			<div class="menu join-menu js-join-menu">
+				<h1>
+					Join Game
+				</h1>
+
+				<label>
+					Host/IP
+				</label>
+
+				<input type="text" value="127.0.0.1" class="js-join-host-input"></input>
+
+				<label>
+					Port
+				</label>
+
+				<input type="number" value="7000" min="1" class="js-join-port-input"></input>
+
+				<button class="js-join-join">
+					Join
+				</button>
+
+				<button class="js-join-back">
+					Back
+				</button>
+			</div>
+
+			<div class="menu joining-menu js-joining-menu">
+				<div>Connecting<span class="js-joining-dots">...</span></div>
+
+				<button class="js-joining-cancel">Cancel</button>
+			</div>
+
+			<div class="menu lobby-menu js-lobby-menu">
+				<div>Waiting for host to start game<span>...</span></div>
+
+				<button class="js-lobby-leave">Leave</button>
+			</div>
+
+			<div class="menu setup-menu js-setup-menu"><!-- host chooses game options -->
+				<div>Board width<input type="number" min="2" step="1" value="5" class="js-board-width"></input></div>
+				<div>Board height<input type="number" min="2" step="1" value="5" class="js-board-height"></input></div>
+
+				<button class="js-setup-start">Start</button>
+				<button class="js-setup-leave">Leave</button>
+			</div>
+
+			<div class="menu hosting-menu js-hosting-menu">
+				<div>Waiting for a player<span class="js-hosting-dots">...</span></div>
+
+				<button class="js-hosting-cancel">Cancel</button>
+			</div>
+
+			<div class="menu host-menu js-host-menu">
+				<h1>
+					Host Game
+				</h1>
+
+				<label>
+					Port
+				</label>
+
+				<input type="number" value="7000" min="1" class="js-host-port-input"></input>
+
+				<button class="js-host-host">
+					Host
+				</button>
+
+				<button class="js-host-back">
+					Back
+				</button>
+			</div>
+
+			<div class="menu about-menu js-about-menu">
+				<h1>
+					Chomp
+				</h1>
+
+				<p>Author: Costava</p>
+
+				<button class="js-about-back">
+					Back
+				</button>
+			</div>
+
+			<div class="menu no-connection-menu js-no-connection-menu">
+				<h1>No Connection</h1>
+
+				<div class="js-no-connection-message"></div>
+
+				<button class="js-no-connection-back">
+					Return to Main Menu
+				</button>
+		</div>
+	</body>
+</html>
