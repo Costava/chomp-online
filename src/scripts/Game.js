@@ -24,11 +24,12 @@ function Game(can) {
 
 	this.board = null;
 
-	this.cellBorderProp = 0.08;// Proportion of cell width and height that is border
-	this.cellBorderColor = '#992323';
-	this.cellInnerColor = '#239923';
-	this.cellEatenColor = '#232323';
-	this.cellPoisonColor = '#ff0000';
+	// Proportion of cell width and height that is border
+	// Border is transparent
+	// Eaten cells are transparent/not drawn
+	this.cellBorderProp = 0.08;
+	this.cellInnerColor = '#58FF33';
+	this.cellPoisonColor = '#FF4418';
 
 	this.commands = {
 		"BOARD_WIDTH": function(com) {
@@ -69,7 +70,7 @@ function Game(can) {
 
 				this.showLobbyMenu(false);
 
-				this.drawBoard();
+				this.render();
 
 				this.start();
 			}
@@ -89,7 +90,7 @@ function Game(can) {
 
 			this.place({x: x, y: y});
 			this.myTurn = true;
-			this.drawBoard();
+			this.render();
 
 			if (x == 0 && y == 0) {
 				// You win
@@ -134,6 +135,7 @@ Game.prototype.isHost = function() {
 };
 
 Game.prototype.cleanUp = function() {
+	console.log("stop mouseLS");
 	this.mouseLS.stop();
 	this.started = false;
 }
@@ -163,7 +165,7 @@ Game.prototype.start = function() {
 		if (this.myTurn && this.validCoord(coord) && !this.isEaten(coord)) {
 			this.place(coord);
 			this.myTurn = false;
-			this.drawBoard();
+			this.render();
 			this.sendCommand(`PLACE ${coord.x} ${coord.y}`);
 
 			if (coord.x == 0 && coord.y == 0) {
@@ -176,6 +178,7 @@ Game.prototype.start = function() {
 		}
 	}.bind(this));
 
+	console.log("start mouseLS");
 	this.mouseLS.start();
 };
 
@@ -222,6 +225,11 @@ Game.prototype.getCellSize = function() {
 	return {x: cellWidth, y: cellHeight};
 };
 
+Game.prototype.render = function() {
+	this.ctx.clearRect(0, 0, this.can.width, this.can.height);
+	this.drawBoard();
+};
+
 Game.prototype.drawBoard = function() {
 	if (this.started) {
 		var boardSize = this.getBoardSize();
@@ -235,27 +243,27 @@ Game.prototype.drawBoard = function() {
 
 		for (var r = 0; r < this.boardHeight; r += 1) {
 			for (var c = 0; c < this.boardWidth; c += 1) {
-				if (this.board[r][c] == Game.Uneaten) {
+				if (this.board[r][c] === Game.Uneaten) {
 					this.ctx.save();
 					this.ctx.translate(c * cellSize.x, r * cellSize.y);
-					this.ctx.fillStyle = this.cellBorderColor;
-					this.ctx.fillRect(0, 0, cellSize.x, cellSize.y);
 					this.ctx.translate(this.cellBorderProp * cellSize.x, this.cellBorderProp * cellSize.y);
 					this.ctx.fillStyle = this.cellInnerColor;
 					this.ctx.fillRect(0, 0, (1 - 2 * this.cellBorderProp) * cellSize.x, (1 - 2 * this.cellBorderProp) * cellSize.y);
 					this.ctx.restore();
 				}
-				else if (this.board[r][c] == Game.Eaten) {
-					this.ctx.save();
-					this.ctx.translate(c * cellSize.x, r * cellSize.y);
-					this.ctx.fillStyle = this.cellEatenColor;
-					this.ctx.fillRect(0, 0, cellSize.x, cellSize.y);
-					this.ctx.restore();
-				}
-				else {
+				// Draw nothing if cell is eaten
+				// Log if unknown value
+				else if (this.board[r][c] !== Game.Eaten) {
 					console.log("Unknown value on board: " + this.board[r][c] + ` at row ${r} and column ${c}. Board: ` + this.board);
 				}
 			}
+		}
+
+		if (!this.isEaten({x: 0, y: 0})) {
+			this.ctx.save();
+			this.ctx.fillStyle = this.cellPoisonColor;
+			this.ctx.fillRect(0, 0, cellSize.x, cellSize.y);
+			this.ctx.restore();
 		}
 
 		this.ctx.restore();
