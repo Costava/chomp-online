@@ -28,8 +28,8 @@ function Game(can) {
 	// Border is transparent
 	// Eaten cells are transparent/not drawn
 	this.cellBorderProp = 0.08;
-	this.cellInnerColor = '#58FF33';
-	this.cellPoisonColor = '#FF4418';
+	this.cellInnerColor = '#58ff33';
+	this.cellPoisonColor = '#ff4418';
 
 	this.commands = {
 		"BOARD_WIDTH": function(com) {
@@ -142,11 +142,9 @@ Game.prototype.cleanUp = function() {
 
 Game.prototype.start = function() {
 	this.mouseLS = new ListenerSystem(window, 'click', function(e) {
-		// var boardSize = this.getBoardSize();
 		var cellSize = this.getCellSize();
 		var boundingClientRect = this.can.getBoundingClientRect();
 
-		// console.log("boardSize:", boardSize);
 		// console.log("cellSize:", cellSize);
 
 		// Pixels relative to top left of board (not canvas of board)

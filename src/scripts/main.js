@@ -57,7 +57,6 @@ game.joiningCallbacks.error = function(e) {
 	console.log("Returning to main menu. Error joining:");
 	console.log(e);
 
-	// console.log("About to stop joiningMenu");
 	menuHub.stop('joining');
 
 	menuHub.start('main');
@@ -502,10 +501,7 @@ function handleResize() {
 	appContainer.style.marginTop = `${Math.floor(vertRemaining / 2)}px`;
 	appContainer.style.marginBottom = `${Math.ceil(vertRemaining / 2)}px`;
 
-	// app.draw();
-	if (game.started) {
-		game.drawBoard();
-	}
+	game.render();
 }
 
 var handleResizeTimeout = new Timeout(handleResize, 150);
