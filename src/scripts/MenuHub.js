@@ -19,7 +19,7 @@ MenuHub.prototype.start = function(name) {
 		console.log(`Warning from MenuHub. ${menu.name} already a current menu`);
 	}
 	else {
-		this.currentMenus.append(menu);
+		this.currentMenus.push(menu);
 	}
 };
 

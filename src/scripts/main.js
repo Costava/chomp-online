@@ -34,19 +34,19 @@ var game = new Game(can);
 
 game.showLobbyMenu = function(bool) {
 	if (bool) {
-		lobbyMenu.start();
+		menuHub.start('lobby');
 	}
 	else {
-		lobbyMenu.stop();
+		menuHub.stop('lobby');
 	}
 }
 
 game.winCallback = function() {
 	if (game.isHost()) {
-		setupMenu.start();
+		menuHub.start('setup');
 	}
 	else {
-		lobbyMenu.start();
+		menuHub.start('lobby');
 	}
 };
 
@@ -58,19 +58,19 @@ game.joiningCallbacks.error = function(e) {
 	console.log(e);
 
 	// console.log("About to stop joiningMenu");
-	joiningMenu.stop();
+	menuHub.stop('joining');
 
-	mainMenu.start();
+	menuHub.start('main');
 };
 
 game.joiningCallbacks.connected = function() {
 	console.log("Connected to peer successfully");
 
-	joiningMenu.stop();
+	menuHub.stop('joining');
 
 	game.server.callbacks = game.gameCallbacks;
 
-	lobbyMenu.start();
+	menuHub.start('lobby');
 };
 
 game.hostingCallbacks.error = function(e) {
@@ -78,326 +78,41 @@ game.hostingCallbacks.error = function(e) {
 	console.log("Returning to main menu. Error:");
 	console.log(e);
 
-	hostingMenu.stop();
+	menuHub.stop('hosting');
 
-	mainMenu.start();
+	menuHub.start('main');
 };
 
 game.hostingCallbacks.connected = function() {
 	console.log("Connected to peer successfully");
 
-	hostingMenu.stop();
+	menuHub.stop('hosting');
 
 	game.server.callbacks = game.gameCallbacks;
 
-	setupMenu.start();
+	menuHub.start('setup');
 };
 
 game.gameCallbacks.end = function() {
-	mainMenu.start();
+	menuHub.stopAllCurrent();
+	menuHub.start('main');
+};
+
+game.gameCallbacks.error = function() {
+	menuHub.stopAllCurrent();
+	menuHub.start('main');
 };
 
 game.gameCallbacks.data = function(data) {
 	game.handleData(data);
 };
 
-////////// Define menus
-
-var menus = [];
-var currentMenu = null;
-
-function stopMenu() {
-	if (currentMenu !== null) {
-		currentMenu.stop();
-
-		currentMenu = null;
-	}
-}
-
-function startMenu(menu) {
-	stopMenu();
-
-	currentMenu = menu;
-
-	currentMenu.start();
-}
-
-function stopAllMenus() {
-	menus.forEach(function(menu) {
-		menu.stop();
-	});
-}
-
-// Interval that dots change (ms)
-var dotsInterval = 200;
-
-function handleDots(dotsElement) {
-	var numDots = dotsElement.innerHTML.length;
-	numDots += 1;
-	numDots %= 5;
-
-	var newInner = "";
-
-	for (var i = 0; i < numDots; i += 1) {
-		newInner += ".";
-	}
-
-	// console.log(dotsElement.innerHTML);
-	// console.log(dotsElement.innerHTML.length);
-
-	dotsElement.innerHTML = newInner;
-}
-
-var mainMenu = new Menu({
-	element: document.querySelector('.js-main-menu'),
-	showZ: 1000,
-	hideZ: -1000,
-	startWork: function() {
-
-	},
-	stopWork: function() {
-
-	},
-	listenerSystems: [
-		new ListenerSystem(
-			document.querySelector('.js-main-join'),
-			'click',
-			function() {
-				mainMenu.stop();
-
-				joinMenu.start();
-			}
-		),
-		new ListenerSystem(
-			document.querySelector('.js-main-host'),
-			'click',
-			function() {
-				mainMenu.stop();
-
-				hostMenu.start();
-			}
-		),
-		new ListenerSystem(
-			document.querySelector('.js-main-about'),
-			'click',
-			function() {
-				mainMenu.stop();
-
-				aboutMenu.start();
-			}
-		),
-		new ListenerSystem(
-			document.querySelector('.js-main-exit'),
-			'click',
-			function() {
-				appWindow.close();
-			}
-		)
-	]
-});
-
-var joinMenu = new Menu({
-	element: document.querySelector('.js-join-menu'),
-	showZ: 1000,
-	hideZ: -1000,
-	startWork: function() {
-		handleJoinInfoChange();
-	},
-	stopWork: function() {
-
-	},
-	listenerSystems: [
-		new ListenerSystem(
-			document.querySelector('.js-join-join'),
-			'click',
-			function() {
-				console.log("Pressed join");
-
-				joinMenu.stop();
-
-				var host = getJoinHost();
-				var port = getJoinPort();
-
-				game.tryJoin(host, port);
-
-				joiningMenu.start();
-			}
-		),
-		new ListenerSystem(
-			document.querySelector('.js-join-back'),
-			'click',
-			function() {
-				joinMenu.stop();
-
-				mainMenu.start();
-			}
-		),
-		new ListenerSystem(
-			document.querySelector('.js-join-host-input'),
-			'change',
-			handleJoinInfoChange
-		),
-		new ListenerSystem(
-			document.querySelector('.js-join-port-input'),
-			'change',
-			handleJoinInfoChange
-		)
-	]
-});
-
-var joiningMenu = new Menu({
-	element: document.querySelector('.js-joining-menu'),
-	showZ: 1000,
-	hideZ: -1000,
-	startWork: function() {
-		joiningMenu.loop = setTimeout(joiningMenu.loopWork, dotsInterval);
-	},
-	stopWork: function() {
-		clearTimeout(joiningMenu.loop);
-	},
-	listenerSystems: [
-		new ListenerSystem(
-			document.querySelector('.js-joining-cancel'),
-			'click',
-			function() {
-				game.server.destroy();
-
-				joiningMenu.stop();
-
-				mainMenu.start();
-			}
-		)
-	]
-});
-
-joiningMenu.loopWork = function() {
-	var dotsElement = document.querySelector('.js-joining-dots');
-
-	handleDots(dotsElement);
-
-	joiningMenu.loop = setTimeout(joiningMenu.loopWork, dotsInterval);
-};
-
-var lobbyMenu = new Menu({
-	element: document.querySelector('.js-lobby-menu'),
-	showZ: 1000,
-	hideZ: -1000,
-	startWork: function() {
-
-	},
-	stopWork: function() {
-
-	},
-	listenerSystems: [
-		new ListenerSystem(
-			document.querySelector('.js-lobby-leave'),
-			'click',
-			function() {
-				game.server.destroy();
-
-				lobbyMenu.stop();
-
-				mainMenu.start();
-			}
-		)
-	]
-});
+//////////
 
 // `NaN >= 2` is false
 function validBoardDim(x) {
 	return typeof x === 'number' && Math.floor(x) == x && x >= 2;
 }
-
-var setupMenu = new Menu({
-	element: document.querySelector('.js-setup-menu'),
-	showZ: 1000,
-	hideZ: -1000,
-	startWork: function() {
-
-	},
-	stopWork: function() {
-
-	},
-	listenerSystems: [
-		new ListenerSystem(
-			document.querySelector('.js-setup-start'),
-			'click',
-			function() {
-				var boardWidth =  Math.ceil(Number(document.querySelector('.js-board-width').value));
-				var boardHeight = Math.ceil(Number(document.querySelector('.js-board-height').value));
-
-				boardWidth =  (validBoardDim(boardWidth))  ? boardWidth  : 2;
-				boardHeight = (validBoardDim(boardHeight)) ? boardHeight : 2;
-
-				game.boardWidth = boardWidth;
-				game.boardHeight = boardHeight;
-
-				game.sendCommand("BOARD_WIDTH " + boardWidth);
-				game.sendCommand("BOARD_HEIGHT " + boardHeight);
-				game.sendCommand("YOUR_TURN " + !game.myTurn);
-				game.sendCommand("GAME_START");
-
-				game.started = true;
-
-				game.board = Game.getEmptyBoard(game.boardWidth, game.boardHeight);
-				game.drawBoard();
-				game.start();
-
-				// console.log(boardWidth);
-				// console.log(typeof boardWidth);
-
-				setupMenu.stop();
-			}
-		),
-		new ListenerSystem(
-			document.querySelector('.js-setup-leave'),
-			'click',
-			function() {
-				game.server.destroy();
-
-				setupMenu.stop();
-
-				mainMenu.start();
-			}
-		)
-	]
-});
-
-var hostingMenu = new Menu({
-	element: document.querySelector('.js-hosting-menu'),
-	showZ: 1000,
-	hideZ: -1000,
-	startWork: function() {
-		hostingMenu.loop = setTimeout(hostingMenu.loopWork, dotsInterval);
-	},
-	stopWork: function() {
-		clearTimeout(hostingMenu.loop);
-	},
-	listenerSystems: [
-		new ListenerSystem(
-			document.querySelector('.js-hosting-cancel'),
-			'click',
-			function() {
-				console.log("Pressed cancel on hosting menu");
-
-				hostingMenu.stop();
-
-				game.server.destroy();
-
-				mainMenu.start();
-			}
-		)
-	]
-});
-
-hostingMenu.loopWork = function() {
-	var dotsElement = document.querySelector('.js-hosting-dots');
-
-	handleDots(dotsElement);
-
-	hostingMenu.loop = setTimeout(hostingMenu.loopWork, dotsInterval);
-};
-
 
 function getJoinHost() {
 	return document.querySelector('.js-join-host-input').value;
@@ -425,51 +140,6 @@ function handleJoinInfoChange() {
 	}
 }
 
-var hostMenu = new Menu({
-	element: document.querySelector('.js-host-menu'),
-	showZ: 1000,
-	hideZ: -1000,
-	startWork: function() {
-		handleHostPortChange();
-	},
-	stopWork: function() {
-
-	},
-	listenerSystems: [
-		new ListenerSystem(
-			document.querySelector('.js-host-host'),
-			'click',
-			function() {
-				console.log("Pressed host");
-
-				hostMenu.stop();
-
-				var port = getHostPort();
-
-				game.waitForPlayer(port);
-
-				hostingMenu.start();
-			}
-		),
-		new ListenerSystem(
-			document.querySelector('.js-host-back'),
-			'click',
-			function() {
-				hostMenu.stop();
-
-				game.server.destroy();
-
-				mainMenu.start();
-			}
-		),
-		new ListenerSystem(
-			document.querySelector('.js-host-port-input'),
-			'change',
-			handleHostPortChange
-		)
-	]
-});
-
 function getHostPort() {
 	var value = document.querySelector('.js-host-port-input').value;
 
@@ -491,8 +161,294 @@ function handleHostPortChange() {
 	}
 }
 
-var aboutMenu = new Menu({
+////////// Define menus
+
+var  menuHub = new MenuHub();
+
+menuHub.add({
+	element: document.querySelector('.js-main-menu'),
+	name: "main",
+	showZ: 1000,
+	hideZ: -1000,
+	startWork: function() {
+
+	},
+	stopWork: function() {
+
+	},
+	listenerSystems: [
+		new ListenerSystem(
+			document.querySelector('.js-main-join'),
+			'click',
+			function() {
+				menuHub.stop('main');
+
+				menuHub.start('join');
+			}
+		),
+		new ListenerSystem(
+			document.querySelector('.js-main-host'),
+			'click',
+			function() {
+				menuHub.stop('main');
+
+				menuHub.start('host');
+			}
+		),
+		new ListenerSystem(
+			document.querySelector('.js-main-about'),
+			'click',
+			function() {
+				menuHub.stop('main');
+
+				menuHub.start('about');
+			}
+		),
+		new ListenerSystem(
+			document.querySelector('.js-main-exit'),
+			'click',
+			function() {
+				appWindow.close();
+			}
+		)
+	]
+});
+
+menuHub.add({
+	element: document.querySelector('.js-join-menu'),
+	name: "join",
+	showZ: 1000,
+	hideZ: -1000,
+	startWork: function() {
+		handleJoinInfoChange();
+	},
+	stopWork: function() {
+
+	},
+	listenerSystems: [
+		new ListenerSystem(
+			document.querySelector('.js-join-join'),
+			'click',
+			function() {
+				console.log("Pressed join");
+
+				menuHub.stop('join');
+
+				var host = getJoinHost();
+				var port = getJoinPort();
+
+				game.tryJoin(host, port);
+
+				menuHub.start('joining');
+			}
+		),
+		new ListenerSystem(
+			document.querySelector('.js-join-back'),
+			'click',
+			function() {
+				menuHub.stop('join');
+
+				menuHub.start('main');
+			}
+		),
+		new ListenerSystem(
+			document.querySelector('.js-join-host-input'),
+			'change',
+			handleJoinInfoChange
+		),
+		new ListenerSystem(
+			document.querySelector('.js-join-port-input'),
+			'change',
+			handleJoinInfoChange
+		)
+	]
+});
+
+menuHub.add({
+	element: document.querySelector('.js-joining-menu'),
+	name: "joining",
+	showZ: 1000,
+	hideZ: -1000,
+	startWork: function() {
+
+	},
+	stopWork: function() {
+
+	},
+	listenerSystems: [
+		new ListenerSystem(
+			document.querySelector('.js-joining-cancel'),
+			'click',
+			function() {
+				game.server.destroy();
+
+				menuHub.stop('joining');
+
+				menuHub.start('main');
+			}
+		)
+	]
+});
+
+menuHub.add({
+	element: document.querySelector('.js-lobby-menu'),
+	name: "lobby",
+	showZ: 1000,
+	hideZ: -1000,
+	startWork: function() {
+
+	},
+	stopWork: function() {
+
+	},
+	listenerSystems: [
+		new ListenerSystem(
+			document.querySelector('.js-lobby-leave'),
+			'click',
+			function() {
+				game.server.destroy();
+
+				menuHub.stop('lobby');
+
+				menuHub.start('main');
+			}
+		)
+	]
+});
+
+menuHub.add({
+	element: document.querySelector('.js-setup-menu'),
+	name: "setup",
+	showZ: 1000,
+	hideZ: -1000,
+	startWork: function() {
+
+	},
+	stopWork: function() {
+
+	},
+	listenerSystems: [
+		new ListenerSystem(
+			document.querySelector('.js-setup-start'),
+			'click',
+			function() {
+				menuHub.stop('setup');
+
+				var boardWidth =  Math.ceil(Number(document.querySelector('.js-board-width').value));
+				var boardHeight = Math.ceil(Number(document.querySelector('.js-board-height').value));
+
+				boardWidth =  (validBoardDim(boardWidth))  ? boardWidth  : 4;
+				boardHeight = (validBoardDim(boardHeight)) ? boardHeight : 4;
+
+				game.boardWidth = boardWidth;
+				game.boardHeight = boardHeight;
+
+				game.sendCommand("BOARD_WIDTH " + boardWidth);
+				game.sendCommand("BOARD_HEIGHT " + boardHeight);
+				game.sendCommand("YOUR_TURN " + !game.myTurn);
+				game.sendCommand("GAME_START");
+
+				game.started = true;
+
+				game.board = Game.getEmptyBoard(game.boardWidth, game.boardHeight);
+				game.drawBoard();
+				game.start();
+
+				// console.log(boardWidth);
+				// console.log(typeof boardWidth);
+			}
+		),
+		new ListenerSystem(
+			document.querySelector('.js-setup-leave'),
+			'click',
+			function() {
+				game.server.destroy();
+
+				menuHub.stop('setup');
+
+				menuHub.start('main');
+			}
+		)
+	]
+});
+
+menuHub.add({
+	element: document.querySelector('.js-hosting-menu'),
+	name: "hosting",
+	showZ: 1000,
+	hideZ: -1000,
+	startWork: function() {
+
+	},
+	stopWork: function() {
+
+	},
+	listenerSystems: [
+		new ListenerSystem(
+			document.querySelector('.js-hosting-cancel'),
+			'click',
+			function() {
+				console.log("Pressed cancel on hosting menu");
+
+				menuHub.stop('hosting');
+
+				game.server.destroy();
+
+				menuHub.start('main');
+			}
+		)
+	]
+});
+
+menuHub.add({
+	element: document.querySelector('.js-host-menu'),
+	name: "host",
+	showZ: 1000,
+	hideZ: -1000,
+	startWork: function() {
+		handleHostPortChange();
+	},
+	stopWork: function() {
+
+	},
+	listenerSystems: [
+		new ListenerSystem(
+			document.querySelector('.js-host-host'),
+			'click',
+			function() {
+				console.log("Pressed host");
+
+				menuHub.stop('host');
+
+				var port = getHostPort();
+
+				game.waitForPlayer(port);
+
+				menuHub.start('hosting');
+			}
+		),
+		new ListenerSystem(
+			document.querySelector('.js-host-back'),
+			'click',
+			function() {
+				menuHub.stop('host');
+
+				game.server.destroy();
+
+				menuHub.start('main');
+			}
+		),
+		new ListenerSystem(
+			document.querySelector('.js-host-port-input'),
+			'change',
+			handleHostPortChange
+		)
+	]
+});
+
+menuHub.add({
 	element: document.querySelector('.js-about-menu'),
+	name: "about",
 	showZ: 1000,
 	hideZ: -1000,
 	startWork: function() {
@@ -506,9 +462,9 @@ var aboutMenu = new Menu({
 			document.querySelector('.js-about-back'),
 			'click',
 			function() {
-				aboutMenu.stop();
+				menuHub.stop('about');
 
-				mainMenu.start();
+				menuHub.start('main');
 			}
 		)
 	]
@@ -516,7 +472,7 @@ var aboutMenu = new Menu({
 
 //////////
 
-mainMenu.start();
+menuHub.start('main');
 
 //////////
 

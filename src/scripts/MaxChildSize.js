@@ -65,5 +65,7 @@ export default function(childAspectWidth, childAspectHeight, parentWidth, parent
 		);
 	}
 
+	// console.log(`width: ${width} height: ${height}`);
+
 	return {width: width, height: height};
 }
