@@ -1,5 +1,5 @@
 const fs = require('fs');
-var fse = require('fs-extra');
+const fse = require('fs-extra');
 var minify = require('html-minifier').minify;
 
 //////////

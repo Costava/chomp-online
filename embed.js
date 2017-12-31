@@ -7,7 +7,7 @@
  */
 
 const fs = require('fs');
-var fse = require('fs-extra');
+const fse = require('fs-extra');
 
 ////////// Cut off node and script file path
 
