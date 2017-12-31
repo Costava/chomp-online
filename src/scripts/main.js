@@ -200,6 +200,10 @@ menuHub.add({
 			function() {
 				menuHub.stop('main');
 
+				// // Debug
+				// console.log("Game.sendModal");
+				// Game.sendModal("Hello, Wooooorld Hello Hello Hello Hello asdf asdf adsf adsf");
+
 				menuHub.start('about');
 			}
 		),

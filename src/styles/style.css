@@ -45,6 +45,21 @@ body {
 	background-color: #555;
 }
 
+.modal {
+	position: fixed;
+	top: 0;
+	left: 50%;
+	transform: translate(-50%, -100%);
+
+	z-index: 2000;
+
+	transition-property: all;
+	transition-timing-function: ease-in-out;
+
+	color: #ffffff;
+	text-align: center;
+}
+
 /* ////////// */
 
 .menu {

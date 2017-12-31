@@ -96,7 +96,7 @@ function Game(can) {
 				// You win
 				console.log("You win!");
 				this.cleanUp();
-				alert("You win!");
+				Game.sendModal("You win!");
 				this.winCallback();
 			}
 		}.bind(this)
@@ -129,6 +129,35 @@ function Game(can) {
 
 Game.Eaten = 1;
 Game.Uneaten = 0;
+
+Game.sendModal = function(message) {
+	// This is the one place we set the duration
+	var transitionDuration = 3;
+
+	var element = document.createElement('div');
+	element.setAttribute('class', 'modal');
+	element.setAttribute('id', String(Date.now()));
+	element.innerHTML = message;
+	element.style.transitionDuration = String(transitionDuration) + 's';
+	document.body.appendChild(element);
+
+	setTimeout((function (element) {
+		return function() {
+			element.style.top = '100%';
+			element.style.transform = 'translate(-50%, 0)';
+		}
+	})(element), 0);
+
+	setTimeout((function (element) {
+		return function() {
+			element.parentNode.removeChild(element);
+		}
+	})(element), transitionDuration * 1000);
+
+	// setTimeout((return function() {
+	// 	element.parentNode.removeChild(element);
+	// })(element), transitionDuration * 1000);
+}
 
 Game.prototype.isHost = function() {
 	return this.hostToJoin == null;
@@ -168,9 +197,9 @@ Game.prototype.start = function() {
 
 			if (coord.x == 0 && coord.y == 0) {
 				// You lose
-				console.log("You lose.");
+				console.log("You lose!");
 				this.cleanUp();
-				alert("You lose!");
+				Game.sendModal("You lose!");
 				this.loseCallback();
 			}
 		}
