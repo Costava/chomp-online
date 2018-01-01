@@ -45,8 +45,11 @@
 			</div>
 
 			<div class="menu setup-menu js-setup-menu"><!-- host chooses game options -->
-				<div>Board width<input type="number" min="2" step="1" value="5" class="js-board-width"></input></div>
-				<div>Board height<input type="number" min="2" step="1" value="5" class="js-board-height"></input></div>
+				<label>Board width</label>
+				<input type="number" min="2" step="1" value="16" class="js-board-width"></input>
+
+				<label>Board height</label>
+				<input type="number" min="2" step="1" value="9" class="js-board-height"></input>
 
 				<button class="js-setup-start">Start</button>
 				<button class="js-setup-leave">Leave</button>
@@ -71,9 +74,9 @@
 			<div class="menu about-menu js-about-menu">
 				<h1>Chomp Online</h1>
 
-				<p>Author: <a class="js-author-link" href="">Costava</a></p>
-				<p>Version: 0.0.3</p>
-				<p><a class="js-source-link" href="">View source on GitHub</a></p>
+				<div>Author: <a class="js-author-link" href="">Costava</a></div>
+				<div>Version: 0.0.3</div>
+				<div><a class="js-source-link" href="">View source on GitHub</a></div>
 
 				<button class="js-about-back">Back</button>
 			</div>
