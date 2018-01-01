@@ -14,6 +14,8 @@ import validHost from './validHost';
 const remote = require('electron').remote;
 var appWindow = remote.getCurrentWindow();
 
+const {shell} = require('electron');
+
 // const fs = require('fs');
 //
 // // Both go in same directory as electron.exe
@@ -465,6 +467,24 @@ menuHub.add({
 
 	},
 	listenerSystems: [
+		new ListenerSystem(
+			document.querySelector('.js-author-link'),
+			'click',
+			function(e) {
+				e.preventDefault();
+
+				shell.openExternal("https://github.com/Costava");
+			}
+		),
+		new ListenerSystem(
+			document.querySelector('.js-source-link'),
+			'click',
+			function(e) {
+				e.preventDefault();
+
+				shell.openExternal("https://github.com/Costava/chomp-online");
+			}
+		),
 		new ListenerSystem(
 			document.querySelector('.js-about-back'),
 			'click',
