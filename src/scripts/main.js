@@ -355,7 +355,11 @@ menuHub.add({
 
 				game.board = Game.getEmptyBoard(game.boardWidth, game.boardHeight);
 				game.drawBoard();
-				game.start();
+
+				// Stop the button click from being used as an action in the game
+				setTimeout(function() {
+					game.start();
+				}, 0);
 
 				// console.log(boardWidth);
 				// console.log(typeof boardWidth);
