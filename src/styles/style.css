@@ -18,6 +18,8 @@ html, body {
 body {
 	overflow: hidden;
 	background-color: #000;
+
+	font-family: sans-serif;
 }
 
 /* ////////// */
@@ -54,10 +56,16 @@ body {
 	z-index: 2000;
 
 	transition-property: all;
-	transition-timing-function: ease-in-out;
+	-webkit-transition-timing-function: cubic-bezier(0.000, 1.000, 1.000, 0.000);
+	   -moz-transition-timing-function: cubic-bezier(0.000, 1.000, 1.000, 0.000);
+	     -o-transition-timing-function: cubic-bezier(0.000, 1.000, 1.000, 0.000);
+	        transition-timing-function: cubic-bezier(0.000, 1.000, 1.000, 0.000);
 
 	color: #ffffff;
 	text-align: center;
+	font-size: 24px;
+	padding: 20px;
+	background-color: #5566dd;
 }
 
 /* ////////// */

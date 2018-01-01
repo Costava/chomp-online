@@ -202,7 +202,7 @@ menuHub.add({
 
 				// // Debug
 				// console.log("Game.sendModal");
-				// Game.sendModal("Hello, Wooooorld Hello Hello Hello Hello asdf asdf adsf adsf");
+				// Game.sendModal("Placeholder you are the winner!");
 
 				menuHub.start('about');
 			}

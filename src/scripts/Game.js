@@ -153,10 +153,6 @@ Game.sendModal = function(message) {
 			element.parentNode.removeChild(element);
 		}
 	})(element), transitionDuration * 1000);
-
-	// setTimeout((return function() {
-	// 	element.parentNode.removeChild(element);
-	// })(element), transitionDuration * 1000);
 }
 
 Game.prototype.isHost = function() {
