@@ -1,6 +1,6 @@
 {
-  "name": "chomp-dev",
-  "version": "0.0.3",
+  "name": "chomp-online",
+  "version": "1.0.0",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {

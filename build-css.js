@@ -56,7 +56,9 @@ if (minify) {
 		outputLocationMin,
 		[
 			require('postcss-advanced-variables'),
-			require('cssnano')
+			require('cssnano')({
+				safe: true
+			})
 		]
 	);
 }
