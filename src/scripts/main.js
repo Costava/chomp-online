@@ -350,7 +350,7 @@ menuHub.add({
 
 				game.sendCommand("BOARD_WIDTH " + boardWidth);
 				game.sendCommand("BOARD_HEIGHT " + boardHeight);
-				game.sendCommand("YOUR_TURN " + !game.myTurn);
+				game.sendCommand("YOUR_TURN " + String(!game.myTurn));
 				game.sendCommand("GAME_START");
 
 				game.started = true;

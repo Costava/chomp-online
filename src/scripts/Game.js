@@ -79,9 +79,13 @@ function Game(can) {
 			}
 		}.bind(this),
 		"YOUR_TURN": function(com) {
-			var value = Boolean(com[1]);
+			// console.log(`YOUR_TURN com[1] is ${com[1]} typeof ${typeof com[1]}`);
+
+			var value = com[1] === 'true';
 
 			this.myTurn = value;
+
+			// console.log(`YOUR_TURN value is ${value} typeof ${typeof value}`);
 		}.bind(this),
 		// Place the opponent's move
 		"PLACE": function(com) {
@@ -98,6 +102,9 @@ function Game(can) {
 				this.cleanUp();
 				Game.sendModal("You win!");
 				this.winCallback();
+			}
+			else {
+				this.notifyTurn();
 			}
 		}.bind(this)
 	};
@@ -146,14 +153,20 @@ Game.sendModal = function(message) {
 			element.style.top = '100%';
 			element.style.transform = 'translate(-50%, 0)';
 		}
-	})(element), 0);
+	})(element), 50);
+	// The transitioning will not happen sometimes without a suitable delay used here
+	//  (jumps to end instead sometimes when delay is 0 for example)
 
 	setTimeout((function (element) {
 		return function() {
 			element.parentNode.removeChild(element);
 		}
 	})(element), transitionDuration * 1000);
-}
+};
+
+Game.prototype.notifyTurn = function() {
+	Game.sendModal("Your turn!");
+};
 
 Game.prototype.isHost = function() {
 	return this.hostToJoin == null;
@@ -203,6 +216,10 @@ Game.prototype.start = function() {
 
 	console.log("start mouseLS");
 	this.mouseLS.start();
+
+	if (this.myTurn) {
+		this.notifyTurn();
+	}
 };
 
 Game.prototype.validCoord = function(c) {
