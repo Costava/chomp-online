@@ -25,6 +25,10 @@ body {
 a {
 	color: inherit;
 	text-decoration: underline;
+
+	transition-property: color;
+	transition-timing-function: ease;
+	transition-duration: 0.2s;
 }
 
 a:hover {
