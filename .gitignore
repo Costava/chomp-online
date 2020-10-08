@@ -4,4 +4,8 @@ npm-debug.log
 # Ignore intermediary build files
 prep
 
+# Ignore build artifacts
+app/index.html
+app.asar
+
 *.js.map
