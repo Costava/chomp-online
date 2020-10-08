@@ -12,7 +12,7 @@ import validPort from './validPort';
 import validHost from './validHost';
 
 const remote = require('electron').remote;
-var appWindow = remote.getCurrentWindow();
+var browserWindow = remote.BrowserWindow;
 
 const {shell} = require('electron');
 
@@ -213,7 +213,7 @@ menuHub.add({
 			document.querySelector('.js-main-exit'),
 			'click',
 			function() {
-				appWindow.close();
+				browserWindow.close();
 			}
 		)
 	]

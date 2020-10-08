@@ -2,14 +2,24 @@ const {app, BrowserWindow} = require('electron');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
+// Is this still necessary in Electron 10?
 let win;
 
 function createWindow() {
 	// Create the browser window.
-	win = new BrowserWindow({width: 800, height: 600, frame: true, fullscreenable: true});
+	win = new BrowserWindow({
+		width: 800,
+		height: 600,
+		frame: true,
+		fullscreenable: true,
+		webPreferences: {
+			nodeIntegration: true,   // https://stackoverflow.com/questions/44391448/electron-require-is-not-defined
+			enableRemoteModule: true // https://stackoverflow.com/questions/37884130/electron-remote-is-undefined
+		}
+	});
 
-	// and load the index.html of the app.
-	win.loadURL(`file://${__dirname}/index.html`);
+	// Load the index.html of the app.
+	win.loadFile(`index.html`);
 
 	// Open the DevTools
 	// Comment out for production builds
